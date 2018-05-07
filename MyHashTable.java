@@ -1,4 +1,5 @@
-
+//sources were oracle docs, and 2 stackoverflow questions about initializing an array with null values
+// and a null pointer exception from adding to an array
 
 import java.util.*;
 
@@ -67,10 +68,10 @@ public class MyHashTable<K,V> {
    public String toString() {
       StringBuilder temp = new StringBuilder();
       int i = 0;
-      temp.append("{" + myKeys.get(i).myKey.toString() + "=" + myValues.get(myKeys.get(i).myValue));
+      temp.append("{" + myKeys.get(i).myKey.toString() + "=" + myValues.get(myKeys.get(i).myValue).toString());
       
       for(i = 1; i < myBuckets; i++) {
-         temp.append(", " +  myKeys.get(i).myKey.toString() + "=" + myValues.get(myKeys.get(i).myValue));
+         temp.append(", " +  myKeys.get(i).myKey.toString() + "=" + myValues.get(myKeys.get(i).myValue).toString());
       }
       temp.append("}");
       return temp.toString();
