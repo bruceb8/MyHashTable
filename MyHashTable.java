@@ -12,7 +12,6 @@ public class MyHashTable<K,V> {
    
    
    MyHashTable(int capacity) {
-      myBuckets = capacity;
       myKeys = new ArrayList<keyData>(Collections.nCopies(capacity, null));
       myValues = new ArrayList<V>(Collections.nCopies(capacity, null));
       myEntryCount = 0;
@@ -56,7 +55,7 @@ public class MyHashTable<K,V> {
    
    public boolean containsKey(K searchKey) {
       boolean flag = false;
-         for(int i = 0; i < myKeys.size(); i++) {
+         for(int i = 0; i < myBuckets; i++) {
             if(myKeys.get(i) != null && myKeys.get(i).myKey.equals(searchKey)){
                flag = true;
                break;
