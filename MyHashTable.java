@@ -7,13 +7,12 @@ public class MyHashTable<K,V> {
    int myEntryCount;
    int myBuckets;
    int myCapacity;
-   ArrayList<keyData> myKeys;
-   ArrayList<V> myValues;
+   ArrayList<ValueData> myTable;
    
    
    MyHashTable(int capacity) {
-      myKeys = new ArrayList<keyData>(Collections.nCopies(capacity, null));
-      myValues = new ArrayList<V>(Collections.nCopies(capacity, null));
+      myTable = new ArrayList<ValueData>(Collections.nCopies(capacity, null));
+
       myEntryCount = 0;
       myBuckets = 0;
       myCapacity = capacity;
@@ -22,64 +21,75 @@ public class MyHashTable<K,V> {
    void put(K searchKey, V newValue) {
       int pos = hash(searchKey) % myCapacity;
       int cycle = 0;
-         
-         if(!containsKey(searchKey)) {
-            while( cycle < myCapacity && myValues.get(pos) != null) {
-               pos = (pos + 1)%myCapacity;
-               cycle++;
+         while( cycle < myCapacity && myTable.get(pos) != null) {
+            if(myTable.get(pos).myKey.equals(searchKey)){
+               break;
             }
-            myKeys.set(myBuckets, new keyData(searchKey, pos));
-            myBuckets++;
-            myValues.set(pos, newValue);  
-         }else {
-            //this part needs work
-            myValues.set(getKeyData(searchKey).myValue,  newValue);
+            pos = (pos + 1)%myCapacity;
+            cycle++;
          }
-          
+         myBuckets++;
+         myTable.set(pos, new ValueData(newValue, searchKey));  
    }
    
    V get(K searchKey) {
       int pos = hash(searchKey) % myCapacity;
       int cycle = 0;
-      keyData myNode = null;
       V temp;
-      for(int i = 0; i < myBuckets; i++) {
-         if((myKeys.get(i).myKey).equals(searchKey) || myBuckets == 0){
-            myNode = myKeys.get(i);
+      while(cycle < myCapacity) {
+         if(myTable.get(pos).myKey.equals(searchKey)) {
             break;
+         } else {
+            pos = (pos + 1)% myCapacity;
          }
+         cycle++;
       }
-      temp = myValues.get(myNode.myValue);
+      temp = myTable.get(pos).myValue;
       return temp;
    }
    
    public boolean containsKey(K searchKey) {
-      boolean flag = false;
-         for(int i = 0; i < myBuckets; i++) {
-            if(myKeys.get(i) != null && myKeys.get(i).myKey.equals(searchKey)){
-               flag = true;
-               break;
-            }
+      int pos = hash(searchKey) % myCapacity;
+      int cycle = 0;
+      boolean found = false;
+      while(cycle < myCapacity) {
+         if(myTable.get(pos) == null) {
+            break;
+         }else if(myTable.get(pos).myKey.equals(searchKey)) {
+            found = true;
+            break;
+         } else {
+            pos = (pos + 1)% myCapacity;
          }
-      return flag;
+         cycle++;
+      }
+      return found;
    }
    
    public String toString() {
       StringBuilder temp = new StringBuilder();
+      temp.append("{");
       int i = 0;
-      temp.append("{" + myKeys.get(i).myKey.toString() + "=" + myValues.get(myKeys.get(i).myValue).toString());
-      
-      for(i = 1; i < myBuckets; i++) {
-         temp.append(", " +  myKeys.get(i).myKey.toString() + "=" + myValues.get(myKeys.get(i).myValue).toString());
+      int bucketCount = 0;
+      for( i = 0; i < myCapacity; i++) {
+         if(myTable.get(i) != null) {
+            if(bucketCount == 0) {
+               temp.append(myTable.get(i).myKey + "=" + myTable.get(i).myValue);
+               
+            } else {
+               temp.append(", " + myTable.get(i).myKey + "=" + myTable.get(i).myValue);
+            }
+          bucketCount++;
+         }
       }
-      temp.append("}");
+      temp.append("}");      
       return temp.toString();
    }
   
    private int hash(K key) {
       return key.hashCode();
    }
-   
+   /*
    private keyData getKeyData(K searchKey) {
       keyData temp = null;
       for(int i = 0; i < myBuckets; i++) {
@@ -90,27 +100,19 @@ public class MyHashTable<K,V> {
       }
       
       return temp;
-   }
+   }*/
    //OOOHHH make a private class for Key values.  Each key can have multiple values mapped to it,
    //so each key object needs to keep track of what its pointing to
    //the tostring should print like the map normally does
    
-   private class keyData {
+   private class ValueData {
+      V myValue;
       K myKey;
-      int myValue;
       
-      keyData(K theKey) {
+      ValueData(V theValue,K theKey) {
+         myValue = theValue;
          myKey = theKey;
       }
-      keyData(K theKey, int theValue) {
-         myKey = theKey;
-         myValue = theValue;
-      }
-      
-      public void setValue(int theValue) {
-         myValue = theValue;
-      }
-      
       
    }
 }
