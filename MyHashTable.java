@@ -23,6 +23,7 @@ public class MyHashTable<K,V> {
       int cycle = 0;
          while( cycle < myCapacity && myTable.get(pos) != null) {
             if(myTable.get(pos).myKey.equals(searchKey)){
+               myBuckets--;
                break;
             }
             pos = (pos + 1)%myCapacity;
@@ -66,6 +67,50 @@ public class MyHashTable<K,V> {
       return found;
    }
    
+   public HashSet<K> keySet() {
+      HashSet<K> temp = new HashSet<K>();
+      for(int i = 0; i < myCapacity; i++) {
+         if(myTable.get(i) != null) {
+            temp.add(myTable.get(i).myKey);
+         }
+      }
+      return temp;
+   }
+   
+   
+   void stats() {
+      System.out.println( "Number of Entries: " + (myBuckets));
+      System.out.println( "Number of Buckets : " + myCapacity);
+      ArrayList<Integer> histy = new ArrayList<Integer>(myCapacity);
+      int bigProbe = 1;
+      double averageProbe = 0;
+      for(int i = 0; i < myCapacity; i++) {
+         if(myTable.get(i) != null) {
+            int temp = i - hash(myTable.get(i).myKey);
+            if(temp < 0) {
+               temp = temp + myCapacity;
+            }
+            if(temp > bigProbe) {
+               bigProbe = temp;
+            }
+            averageProbe += ((double) temp) / myBuckets;
+            histy.add(temp);
+            
+         }
+      }
+      
+      int[] probeCount = new int[bigProbe];
+      for(int i = 0; i < histy.size(); i++) {
+         probeCount[histy.get(i)]++;
+      }
+      
+      System.out.println("Histogram of Probes: " + Arrays.toString(probeCount));
+      double fill = ((double)myBuckets) / myCapacity;
+      System.out.println("Fill Percentage: " + fill);
+      System.out.println("Max Linear Probe: " + bigProbe);
+      System.out.println("Average Linear Probe: " + averageProbe);
+   
+   }
    public String toString() {
       StringBuilder temp = new StringBuilder();
       temp.append("{");
@@ -85,9 +130,13 @@ public class MyHashTable<K,V> {
       temp.append("}");      
       return temp.toString();
    }
+   
+   
+  
+  
   
    private int hash(K key) {
-      return key.hashCode();
+      return key.hashCode() % myCapacity;
    }
    /*
    private keyData getKeyData(K searchKey) {

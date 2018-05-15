@@ -15,11 +15,14 @@ public class Main {
    }
    
    public static void testMyHashTable() {
-      MyHashTable<String, String> temp = new MyHashTable<String, String>(2<<15);
+      MyHashTable<String, String> temp = new MyHashTable<String, String>(1<<15);
       temp.put("yes" , "please");
       temp.put("No", "Bugs");
       System.out.println(temp.get("yes") + temp.get("No"));
       temp.put("yes", "What do you mean");
       System.out.println(temp);
+      System.out.println(temp.keySet());
+      temp.stats();
    }
+   
 }
